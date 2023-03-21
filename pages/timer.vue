@@ -1,17 +1,25 @@
 <template>
-  <div class="flex flex-col items-center justify-center">
-    <h1>Timer page!</h1>
+  <div class="flex flex-col items-center justify-center mt-8 text-accent-base">
+    <div class="flex items-center justify-between"></div>
     <div
-      class="relative flex items-center justify-center mt-20 border-8 rounded-full w-96 h-96"
+      class="flex items-center justify-center border-8 rounded-full w-80 h-80 border-primary"
     >
-      <div class="absolute -top-20">
-        <StopWatchTop class="w-24 h-24" />
+      <div
+        class="flex items-center justify-center border-4 rounded-full w-72 h-72 border-primary"
+      >
+        <div
+          class="flex items-center justify-center w-64 h-64 text-3xl font-bold border-2 rounded-full border-primary"
+        >
+          <div>02:52:31</div>
+        </div>
       </div>
-      <div class="absolute -top-4 left-64">
-        <StopWatchSide class="w-10 h-10" />
-      </div>
-      <div>Random Text</div>
     </div>
+    <button
+      type="button"
+      class="px-10 py-4 mt-4 font-bold cursor-pointer bg-accent-base text-primary rounded-2xl"
+    >
+      Start
+    </button>
   </div>
 </template>
 
