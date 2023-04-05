@@ -14,7 +14,21 @@
         :value="value"
         class="w-full outline-none bg-secondary"
         @input="$emit('input', $event.target.value)"
+        @blur="$emit('blur', $event.target.value)"
       />
+    </div>
+    <div v-if="isValidation('required')" class="px-4">
+      O campo {{ lowercaseLabel }} é obrigatório.
+    </div>
+    <div v-if="isValidation('email')" class="px-4">
+      Deve ser um e-mail válido!
+    </div>
+    <div v-if="isValidation('minLength')" class="px-4">
+      É preciso ter pelo menos
+      {{ validation.$params.minLength.min }} caracteres.
+    </div>
+    <div v-if="isValidation('sameAsPassword')" class="px-4">
+      As senhas devem ser idênticas.
     </div>
   </div>
 </template>
@@ -41,6 +55,32 @@ export default {
     value: {
       type: String,
       default: '',
+    },
+    validation: {
+      type: Object,
+      required: true,
+    },
+  },
+  computed: {
+    lowercaseLabel() {
+      return this.label.toLowerCase()
+    },
+  },
+  methods: {
+    isValidation(validationName) {
+      if (validationName === 'sameAsPassword') {
+        return (
+          this.validation.$dirty &&
+          this.validation.$params[validationName] &&
+          !this.validation[validationName] &&
+          this.validation.required
+        )
+      }
+      return (
+        this.validation.$dirty &&
+        this.validation.$params[validationName] &&
+        !this.validation[validationName]
+      )
     },
   },
 }

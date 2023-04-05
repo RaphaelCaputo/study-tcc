@@ -4,11 +4,11 @@
   >
     <div class="absolute left-0 text-xl font-bold">Logo</div>
     <h2 class="text-xl font-bold capitalize">{{ pageTitle }}</h2>
-    <template v-if="$auth.loggedIn">
+    <template v-if="isLoggedIn">
       <h2 class="text-xl font-bold capitalize">Logout</h2>
     </template>
     <template v-else>
-      <a class="text-xl font-bold capitalize" @click="$auth.login()">Login</a>
+      <h2 class="text-xl font-bold capitalize">Login</h2>
     </template>
   </header>
 </template>
@@ -21,13 +21,13 @@ export default {
       const split = this.$route.path.split('/')
       return split[split.length - 1]
     },
-  },
-  mounted() {
-    console.log(this.$auth)
+    isLoggedIn() {
+      return false
+    },
   },
   methods: {
     logOut() {
-      this.$auth.logout()
+      return false
     },
   },
 }

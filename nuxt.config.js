@@ -20,7 +20,7 @@ export default {
   css: ['~/assets/css/main.scss'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ['~/plugins/dataApi'],
+  plugins: ['~/plugins/dataApi', '~/plugins/Vuelidate'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -39,9 +39,10 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    '@nuxtjs/auth',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    '~/modules/auth',
+    '~/modules/algolia',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -57,20 +58,22 @@ export default {
     },
   },
 
-  auth: {
-    redirect: {
-      login: '/', // redirect user when not connected
-      callback: '/auth/signed-in',
-    },
-    strategies: {
-      local: false,
-      auth0: {
-        domain: process.env.AUTH0_DOMAIN,
-        client_id: process.env.AUTH0_CLIENT_ID,
-      },
-    },
-  },
-
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
+
+  publicRuntimeConfig: {
+    auth: {
+      cookieName: 'idToken',
+    },
+    algolia: {
+      appId: 'VPXUMQ6W1L',
+      key: '9963406e97d6222757466a6ade2027d9',
+    },
+  },
+  privateRuntimeConfig: {
+    algolia: {
+      appId: 'VPXUMQ6W1L',
+      key: process.env.ALGOLIA_SECRET_KEY,
+    },
+  },
 }

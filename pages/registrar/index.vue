@@ -2,11 +2,20 @@
   <div>
     <form class="flex flex-col space-y-4" @submit.prevent="onSubmit">
       <a-input
+        v-model="name"
+        name="name"
+        label="Nome"
+        type="text"
+        placeholder="Digite o seu nome"
+        :validation="$v.name"
+        @blur="$v.name.$touch()"
+      />
+      <a-input
         v-model="email"
         name="email"
-        label="Email"
+        label="E-mail"
         type="email"
-        placeholder="Digite o email de login"
+        placeholder="Digite o seu email"
         :validation="$v.email"
         @blur="$v.email.$touch()"
       />
@@ -19,43 +28,59 @@
         :validation="$v.password"
         @blur="$v.password.$touch()"
       />
-      <a-button name="Login" type="submit" />
+      <a-input
+        v-model="confirmPassword"
+        name="confirmPassword"
+        label="Confirmar senha"
+        type="password"
+        placeholder="Confirme a senha"
+        :validation="$v.confirmPassword"
+        @blur="$v.confirmPassword.$touch()"
+      />
+      <a-button name="Register" type="submit" />
     </form>
-    <div class="flex justify-center mt-4 text-accent-light">
-      <NuxtLink to="/registrar"
-        >Não tem uma conta? Resgistre-se aqui.
-      </NuxtLink>
-    </div>
   </div>
 </template>
 
 <script>
-import jsCookie from 'js-cookie'
-import { required, email } from 'vuelidate/lib/validators'
+import { required, minLength, email, sameAs } from 'vuelidate/lib/validators'
 import AButton from '~/components/atoms/AButton.vue'
 import AInput from '~/components/atoms/AInput.vue'
+// import { unWrap } from '~/utils/fetchUtils'
 
 export default {
   components: { AButton, AInput },
   layout: 'loginLayout',
   data() {
     return {
+      name: '',
       email: '',
       password: '',
+      confirmPassword: '',
     }
   },
   validations: {
+    name: {
+      required,
+      minLength: minLength(3),
+    },
     email: {
       required,
       email,
     },
     password: {
       required,
+      minLength: minLength(6),
+    },
+    confirmPassword: {
+      required,
+      sameAsPassword: sameAs('password'),
     },
   },
   mounted() {
     this.email = ''
     this.password = ''
+    this.confirmPassword = ''
   },
   methods: {
     async onSubmit() {
@@ -63,7 +88,7 @@ export default {
         this.$v.$touch()
         if (this.$v.$invalid) return
 
-        const response = await fetch('/api/login', {
+        const response = await fetch('/api/user', {
           method: 'POST',
           body: JSON.stringify({
             name: this.name,
@@ -74,15 +99,12 @@ export default {
             'Content-Type': 'application/json',
           },
         })
+        console.log('submit!')
+        console.log('response', response)
 
         if (response.ok) {
-          const authConfig = this.$config.auth
           const json = await response.json()
-          jsCookie.set(authConfig.cookieName, json.token, {
-            expires: 1 / 24,
-            sameSite: 'Lax',
-          })
-          this.$router.push('/')
+          console.log('json', json)
         }
       } catch (error) {
         console.error(error)

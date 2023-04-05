@@ -1,10 +1,8 @@
 import { unWrap, getErrorResponse } from '~/utils/fetchUtils'
-export default function (context, inject) {
-  const appId = 'VPXUMQ6W1L'
-  const apiKey = '9963406e97d6222757466a6ade2027d9'
+export default function ({ $config }, inject) {
   const headers = {
-    'X-Algolia-API-Key': apiKey,
-    'X-Algolia-Application-Id': appId,
+    'X-Algolia-API-Key': $config.algolia.key,
+    'X-Algolia-Application-Id': $config.algolia.appId,
   }
 
   inject('dataApi', {
@@ -17,7 +15,7 @@ export default function (context, inject) {
     try {
       return unWrap(
         await fetch(
-          `https://${appId}-dsn.algolia.net/1/indexes/users/${userId}`,
+          `https://${$config.algolia.appId}-dsn.algolia.net/1/indexes/users/${userId}`,
           {
             headers,
           }
@@ -32,7 +30,7 @@ export default function (context, inject) {
     try {
       return unWrap(
         await fetch(
-          `https://${appId}-dsn.algolia.net/1/indexes/subjects/${subjectId}`,
+          `https://${$config.algolia.appId}-dsn.algolia.net/1/indexes/subjects/${subjectId}`,
           {
             headers,
           }
@@ -47,7 +45,7 @@ export default function (context, inject) {
     try {
       return unWrap(
         await fetch(
-          `https://${appId}-dsn.algolia.net/1/indexes/subjects/query`,
+          `https://${$config.algolia.appId}-dsn.algolia.net/1/indexes/subjects/query`,
           {
             headers,
             method: 'POST',
