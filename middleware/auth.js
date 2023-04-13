@@ -5,6 +5,7 @@ export default function ({ $config, redirect, store }) {
   const idToken = jsCookie.get($config.auth.cookieName)
 
   if (!idToken) {
+    store.commit('user/user', null)
     redirect({ name: 'login' })
   }
 

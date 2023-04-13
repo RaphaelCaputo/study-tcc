@@ -5,7 +5,9 @@
     <div class="absolute left-0 text-xl font-bold">Logo</div>
     <h2 class="text-xl font-bold capitalize">{{ pageTitle }}</h2>
     <template v-if="isLoggedIn">
-      <h2 class="text-xl font-bold capitalize">Logout, {{ user.name }}</h2>
+      <h2 class="text-xl font-bold capitalize" @click="logout">
+        Logout, {{ user.name }}
+      </h2>
     </template>
     <template v-else>
       <h2 class="text-xl font-bold capitalize">Login</h2>
@@ -14,6 +16,8 @@
 </template>
 
 <script>
+import jsCookie from 'js-cookie'
+
 export default {
   name: 'HeaderNav',
   computed: {
@@ -29,8 +33,11 @@ export default {
     },
   },
   methods: {
-    logOut() {
-      return false
+    logout() {
+      const authConfig = this.$config.auth
+      jsCookie.remove(authConfig.cookieName)
+      this.$store.commit('user/user', null)
+      this.$router.push('/login')
     },
   },
 }
