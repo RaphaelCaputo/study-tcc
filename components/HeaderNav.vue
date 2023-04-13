@@ -5,7 +5,7 @@
     <div class="absolute left-0 text-xl font-bold">Logo</div>
     <h2 class="text-xl font-bold capitalize">{{ pageTitle }}</h2>
     <template v-if="isLoggedIn">
-      <h2 class="text-xl font-bold capitalize">Logout</h2>
+      <h2 class="text-xl font-bold capitalize">Logout, {{ user.name }}</h2>
     </template>
     <template v-else>
       <h2 class="text-xl font-bold capitalize">Login</h2>
@@ -22,7 +22,10 @@ export default {
       return split[split.length - 1]
     },
     isLoggedIn() {
-      return false
+      return this.$store.state.user.isLoggedIn
+    },
+    user() {
+      return this.$store.state.user.user
     },
   },
   methods: {
