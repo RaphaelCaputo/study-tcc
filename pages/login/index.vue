@@ -78,6 +78,7 @@ export default {
         if (response.ok) {
           const authConfig = this.$config.auth
           const json = await response.json()
+          console.log(json)
           jsCookie.set(authConfig.cookieName, json.token, {
             expires: 1 / 24,
             sameSite: 'Lax',

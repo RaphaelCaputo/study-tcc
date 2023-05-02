@@ -9,6 +9,7 @@ export default function ({ $config }, inject) {
     getUser,
     getSubject,
     getSubjectByUserId,
+    getChaptersBySubjectId,
   })
 
   async function getUser(userId) {
@@ -51,9 +52,23 @@ export default function ({ $config }, inject) {
             method: 'POST',
             body: JSON.stringify({
               filters: `userId:${userId}`,
-              hitsPerPage: 6,
               attributesToHighlight: [],
             }),
+          }
+        )
+      )
+    } catch (error) {
+      return getErrorResponse(error)
+    }
+  }
+
+  async function getChaptersBySubjectId(subjectId) {
+    try {
+      return unWrap(
+        await fetch(
+          `https://${$config.algolia.appId}-dsn.algolia.net/1/indexes/chapters/${subjectId}`,
+          {
+            headers,
           }
         )
       )

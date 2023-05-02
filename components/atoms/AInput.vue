@@ -30,6 +30,14 @@
     <div v-if="isValidation('sameAsPassword')" class="px-4">
       As senhas devem ser idênticas.
     </div>
+    <div v-if="isValidation('between')" class="px-4">
+      Valor entre
+      {{ validation.$params.between.min }} e
+      {{ validation.$params.between.max }}.
+    </div>
+    <div v-if="isValidation('numeric')" class="px-4">
+      Precisa ser um número.
+    </div>
   </div>
 </template>
 

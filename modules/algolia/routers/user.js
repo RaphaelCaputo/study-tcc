@@ -18,7 +18,7 @@ export default (apis) => {
     }
 
     const payload = await makeUserPayload(body)
-    apis.user.create(payload)
+    await apis.user.create(payload)
     sendJSON(payload, res)
   }
 

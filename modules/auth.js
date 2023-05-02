@@ -1,7 +1,7 @@
-// import cookie from 'cookie'
+import cookie from 'cookie'
 
 export default function () {
-  // const authConfig = this.options.publicRuntimeConfig.auth
+  const authConfig = this.options.publicRuntimeConfig.auth
 
   this.nuxt.hook('render:setupMiddleware', (app) => {
     app.use('/api', handler)
@@ -16,26 +16,21 @@ export default function () {
 
   // async
   function handler(req, res, next) {
-    // const idToken = cookie.parse(req.headers.cookie)[authConfig.cookieName]
-    // if(!idToken) return rejectHit(res)
+    console.log(req.originalUrl)
+    if (req.originalUrl !== '/api/login') {
+      const idToken = cookie.parse(req.headers.cookie)[authConfig.cookieName]
+      console.log(idToken)
+      if (!idToken && req.originalUrl !== '/api/login') return rejectHit(res)
+    }
 
-    // console.log(req.originalUrl)
-    // console.log(idToken)
     // const ticket = await getUser(idToken)
     // if(!ticket) return rejectHit(res)
     // console.log(ticket)
-    // req.identity = {
-    //     id: ticket.sub,
-    //     email: ticket.email,
-    //     name: ticket.name,
-    //     image: ticket.picture,
-    // }
-    console.log('Hello from AuthMiddleware')
     next()
   }
 
-  // function rejectHit(res){
-  //     res.statusCode = 401
-  //     res.end()
-  // }
+  function rejectHit(res) {
+    res.statusCode = 401
+    res.end()
+  }
 }

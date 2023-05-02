@@ -6,11 +6,11 @@ export default (algoliaConfig) => {
   const headers = getHeaders(algoliaConfig)
   return {
     create: async (payload) => {
+      console.log('payload', payload)
       try {
-        console.log('payload', payload)
         return unWrap(
           await fetch(
-            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/users`,
+            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/subjects`,
             {
               headers,
               method: 'POST',
@@ -22,11 +22,11 @@ export default (algoliaConfig) => {
         return getErrorResponse(error)
       }
     },
-    update: async (userId, payload) => {
+    update: async (subjectId, payload) => {
       try {
         return unWrap(
           await fetch(
-            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/users/${userId}`,
+            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/subjects/${subjectId}`,
             {
               headers,
               method: 'PUT',
@@ -38,19 +38,13 @@ export default (algoliaConfig) => {
         return getErrorResponse(error)
       }
     },
-    getByEmail: async (email) => {
+    getById: async (subjectId) => {
       try {
         return unWrap(
           await fetch(
-            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/users/query`,
+            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/subjects/${subjectId}`,
             {
               headers,
-              method: 'POST',
-              body: JSON.stringify({
-                filters: `email:${email}`,
-                attributesToRetrieve: ['objectID', 'name', 'email', 'password'],
-                attributesToHighlight: [],
-              }),
             }
           )
         )
@@ -58,13 +52,19 @@ export default (algoliaConfig) => {
         return getErrorResponse(error)
       }
     },
-    getById: async (userId) => {
+    getByUserId: async (userId) => {
       try {
         return unWrap(
           await fetch(
-            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/users/${userId}`,
+            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/subjects/query`,
             {
               headers,
+              method: 'POST',
+              body: JSON.stringify({
+                filters: `userId:${userId}`,
+                attributesToRetrieve: ['*'],
+                attributesToHighlight: [],
+              }),
             }
           )
         )

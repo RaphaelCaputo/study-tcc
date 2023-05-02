@@ -14,20 +14,20 @@
         <IconSearch class="" />
       </div>
       <NuxtLink
-        to="/materias/criar"
+        :to="`${$route.path}/criar`"
         class="px-4 py-2 ml-4 text-xl bg-accent-base text-primary rounded-xl"
       >
         +
       </NuxtLink>
     </form>
 
-    <!-- Subjects Card -->
-    <div
+    <!-- Chapters Card -->
+    <!-- <div
       class="flex-grow w-full p-2 mt-8 mb-24 overflow-y-auto text-accent-base md:mb-0"
     >
       <ul class="space-y-3">
-        <li v-for="subject in subjects" :key="subject.objectID">
-          <NuxtLink :to="`/materias/${subject.objectID}/capitulos`">
+        <li v-for="chapter in chapters" :key="chapter.objectID">
+          <NuxtLink :to="`/materias/${chapter.objectID}`">
             <CardSubject
               :id="subject.objectID"
               :subject="subject.name"
@@ -36,24 +36,24 @@
           </NuxtLink>
         </li>
       </ul>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
 export default {
-  name: 'SubjectsPage',
-  async asyncData({ $dataApi, error, store }) {
-    const userId = store.state.auth.user.objectID
-    const response = await $dataApi.getSubjectByUserId(userId)
-    if (!response.ok)
-      return error({
-        statusCode: response.status,
-        message: response.statusText,
-      })
-    return {
-      subjects: response.json.hits,
-    }
-  },
+  name: 'ChapterPage',
+  // async asyncData({ params, $dataApi, error }) {
+  //   const response = await $dataApi.getChaptersBySubjectId(params.id)
+  //   if (!response.ok)
+  //     return error({
+  //       statusCode: response.status,
+  //       message: response.statusText,
+  //     })
+  //   return {
+  //     chapters: response.json,
+  //   }
+  // },
+  computed: {},
 }
 </script>

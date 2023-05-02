@@ -6,11 +6,11 @@ export default (algoliaConfig) => {
   const headers = getHeaders(algoliaConfig)
   return {
     create: async (payload) => {
+      console.log('payload', payload)
       try {
-        console.log('payload', payload)
         return unWrap(
           await fetch(
-            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/users`,
+            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/chapters`,
             {
               headers,
               method: 'POST',
@@ -22,15 +22,13 @@ export default (algoliaConfig) => {
         return getErrorResponse(error)
       }
     },
-    update: async (userId, payload) => {
+    getById: async (identity) => {
       try {
         return unWrap(
           await fetch(
-            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/users/${userId}`,
+            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/chapters/${identity.id}`,
             {
               headers,
-              method: 'PUT',
-              body: JSON.stringify(payload),
             }
           )
         )
@@ -38,33 +36,19 @@ export default (algoliaConfig) => {
         return getErrorResponse(error)
       }
     },
-    getByEmail: async (email) => {
+    getBySubjectId: async (userId) => {
       try {
         return unWrap(
           await fetch(
-            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/users/query`,
+            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/chapters/query`,
             {
               headers,
               method: 'POST',
               body: JSON.stringify({
-                filters: `email:${email}`,
-                attributesToRetrieve: ['objectID', 'name', 'email', 'password'],
+                filters: `userId:${userId}`,
+                attributesToRetrieve: ['*'],
                 attributesToHighlight: [],
               }),
-            }
-          )
-        )
-      } catch (error) {
-        return getErrorResponse(error)
-      }
-    },
-    getById: async (userId) => {
-      try {
-        return unWrap(
-          await fetch(
-            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/users/${userId}`,
-            {
-              headers,
             }
           )
         )

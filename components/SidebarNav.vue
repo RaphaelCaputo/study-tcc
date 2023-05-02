@@ -25,7 +25,7 @@
     </li>
     <li class="cursor-pointer hover:text-accent-base md:w-20 md:mb-8">
       <NuxtLink
-        to="/subject"
+        to="/materias"
         class="relative flex items-center justify-center p-2"
       >
         <div class="w-8">

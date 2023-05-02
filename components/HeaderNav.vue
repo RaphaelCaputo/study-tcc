@@ -26,17 +26,17 @@ export default {
       return split[split.length - 1]
     },
     isLoggedIn() {
-      return this.$store.state.user.isLoggedIn
+      return this.$store.state.auth.isLoggedIn
     },
     user() {
-      return this.$store.state.user.user
+      return this.$store.state.auth.user
     },
   },
   methods: {
     logout() {
       const authConfig = this.$config.auth
       jsCookie.remove(authConfig.cookieName)
-      this.$store.commit('user/user', null)
+      this.$store.commit('auth/user', null)
       this.$router.push('/login')
     },
   },
