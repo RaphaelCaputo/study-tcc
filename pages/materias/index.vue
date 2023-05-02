@@ -26,7 +26,7 @@
       class="flex-grow w-full p-2 mt-8 mb-24 overflow-y-auto text-accent-base md:mb-0"
     >
       <ul class="space-y-3">
-        <li v-for="subject in subjects" :key="subject.objectID">
+        <li v-for="subject in subjectList" :key="subject.objectID">
           <NuxtLink :to="`/materias/${subject.objectID}/capitulos`">
             <CardSubject
               :id="subject.objectID"
@@ -43,16 +43,22 @@
 <script>
 export default {
   name: 'SubjectsPage',
-  async asyncData({ $dataApi, error, store }) {
-    const userId = store.state.auth.user.objectID
-    const response = await $dataApi.getSubjectByUserId(userId)
-    if (!response.ok)
-      return error({
-        statusCode: response.status,
-        message: response.statusText,
-      })
-    return {
-      subjects: response.json.hits,
+  computed: {
+    subjectList() {
+      return this.$store.state.subject.list
+    },
+  },
+  async beforeMount() {
+    try {
+      const hasList = this.$store.state.subject.list.length
+      if (!hasList) {
+        const userId = this.$store.state.auth.user.objectID
+        const response = await this.$dataApi.getSubjectByUserId(userId)
+        if (response.ok)
+          this.$store.commit('subject/createList', response.json.hits)
+      }
+    } catch (error) {
+      console.error(error)
     }
   },
 }

@@ -58,24 +58,31 @@ export default {
         this.$v.$touch()
         if (this.$v.$invalid) return
 
+        const payload = {
+          name: this.name,
+          color: this.color,
+          userId: this.$store.state.auth.user.objectID,
+          createdAt: new Date().toISOString(),
+        }
         const response = await fetch('/api/subject', {
           method: 'POST',
-          body: JSON.stringify({
-            name: this.name,
-            color: this.color,
-            userId: this.$store.state.auth.user.objectID,
-          }),
+          body: JSON.stringify(payload),
           headers: {
             'Content-Type': 'application/json',
           },
         })
         console.log('submit!')
         console.log('response', response)
-        this.$router.push('/materias')
 
         if (response.ok) {
           const json = await response.json()
+          const addedSubject = {
+            objectID: json.objectID,
+            ...payload,
+          }
+          this.$store.commit('subject/addOneToList', addedSubject)
           console.log('json', json)
+          console.log('addedSub', addedSubject)
         }
       } catch (error) {
         console.error(error)
