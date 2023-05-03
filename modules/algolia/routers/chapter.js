@@ -11,7 +11,7 @@ export default (apis) => {
 
     if (req.method === 'GET') {
       console.log('GET in CHAPTER')
-      return await getChaptersBySubjectId(body.userId, res)
+      return await getChaptersBySubjectId(body.userId, body.subjectId, res)
     }
 
     if (req.method === 'POST') {
@@ -34,8 +34,9 @@ export default (apis) => {
   //     sendJSON({}, res)
   // }
 
-  async function getChaptersBySubjectId(subjectId, res) {
-    const payload = (await apis.chapter.getBySubjectId(subjectId)).json.hits
+  async function getChaptersBySubjectId(userId, subjectId, res) {
+    const payload = (await apis.chapter.getBySubjectId(userId, subjectId)).json
+      .hits
     sendJSON(payload, res)
   }
 

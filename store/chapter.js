@@ -1,6 +1,5 @@
 export const state = () => ({
   list: [],
-  currentSubject: '',
 })
 
 export const getters = {
@@ -15,8 +14,5 @@ export const mutations = {
   },
   addOneToList(state, payload) {
     state.list.push(payload)
-  },
-  setCurrentSubject(state, subjectId) {
-    state.currentSubject = subjectId
   },
 }

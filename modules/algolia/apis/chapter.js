@@ -36,7 +36,7 @@ export default (algoliaConfig) => {
         return getErrorResponse(error)
       }
     },
-    getBySubjectId: async (userId) => {
+    getBySubjectId: async (userId, subjectId) => {
       try {
         return unWrap(
           await fetch(
@@ -45,7 +45,7 @@ export default (algoliaConfig) => {
               headers,
               method: 'POST',
               body: JSON.stringify({
-                filters: `userId:${userId}`,
+                filters: `userId:${userId}, subjectId:${subjectId}`,
                 attributesToRetrieve: ['*'],
                 attributesToHighlight: [],
               }),

@@ -22,38 +22,53 @@
     </form>
 
     <!-- Chapters Card -->
-    <!-- <div
+    <div
       class="flex-grow w-full p-2 mt-8 mb-24 overflow-y-auto text-accent-base md:mb-0"
     >
       <ul class="space-y-3">
-        <li v-for="chapter in chapters" :key="chapter.objectID">
+        <li v-for="chapter in chapterList" :key="chapter.objectID">
           <NuxtLink :to="`/materias/${chapter.objectID}`">
             <CardSubject
-              :id="subject.objectID"
-              :subject="subject.name"
-              :category="subject.category"
+              :id="chapter.objectID"
+              :subject="chapter.name"
+              :category="chapter.category"
             />
           </NuxtLink>
         </li>
       </ul>
-    </div> -->
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: 'ChapterPage',
-  // async asyncData({ params, $dataApi, error }) {
-  //   const response = await $dataApi.getChaptersBySubjectId(params.id)
-  //   if (!response.ok)
-  //     return error({
-  //       statusCode: response.status,
-  //       message: response.statusText,
-  //     })
-  //   return {
-  //     chapters: response.json,
-  //   }
-  // },
-  computed: {},
+  computed: {
+    chapterList() {
+      return this.$store.state.chapter.list
+    },
+    currentSubject() {
+      return this.$store.state.subject.currentSubject
+    },
+  },
+  async beforeMount() {
+    try {
+      const subjectId = this.$route.params.id
+      const hasLength = this.$store.state.chapter.list.length
+      if (!hasLength || this.currentSubject !== subjectId) {
+        this.$store.commit('subject/setCurrentSubject', subjectId)
+
+        const userId = this.$store.state.auth.user.objectID
+        const response = await this.$dataApi.getChaptersBySubjectId(
+          userId,
+          subjectId
+        )
+        if (response.ok)
+          this.$store.commit('chapter/createList', response.json.hits)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  },
 }
 </script>

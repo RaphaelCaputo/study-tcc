@@ -62,13 +62,18 @@ export default function ({ $config }, inject) {
     }
   }
 
-  async function getChaptersBySubjectId(subjectId) {
+  async function getChaptersBySubjectId(userId, subjectId) {
     try {
       return unWrap(
         await fetch(
-          `https://${$config.algolia.appId}-dsn.algolia.net/1/indexes/chapters/${subjectId}`,
+          `https://${$config.algolia.appId}-dsn.algolia.net/1/indexes/chapters/query`,
           {
             headers,
+            method: 'POST',
+            body: JSON.stringify({
+              filters: `userId:${userId} AND subjectId:${subjectId}`,
+              attributesToHighlight: [],
+            }),
           }
         )
       )
