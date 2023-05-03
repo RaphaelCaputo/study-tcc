@@ -89,16 +89,19 @@ export default {
         this.$v.$touch()
         if (this.$v.$invalid) return
 
+        const subjectId = this.$route.params.id
+        const payload = {
+          name: this.name,
+          description: this.description,
+          questionsNumber: this.questionsNumber,
+          correctAnswers: this.correctAnswers,
+          userId: this.$store.state.auth.user.objectID,
+          subjectId,
+          createdAt: new Date().toISOString(),
+        }
         const response = await fetch('/api/chapter', {
           method: 'POST',
-          body: JSON.stringify({
-            name: this.name,
-            description: this.description,
-            questionsNumber: this.questionsNumber,
-            correctAnswers: this.correctAnswers,
-            userId: this.$store.state.auth.user.objectID,
-            subjectId: this.$route.path.split('/')[2],
-          }),
+          body: JSON.stringify(payload),
           headers: {
             'Content-Type': 'application/json',
           },
@@ -108,7 +111,13 @@ export default {
 
         if (response.ok) {
           const json = await response.json()
+          const addedChapter = {
+            objectID: json.objectID,
+            ...payload,
+          }
+          this.$store.commit('chapter/addOneToList', addedChapter)
           console.log('json', json)
+          console.log('addedChapter', addedChapter)
         }
       } catch (error) {
         console.error(error)
