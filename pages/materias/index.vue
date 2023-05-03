@@ -50,8 +50,8 @@ export default {
   },
   async beforeMount() {
     try {
-      const hasList = this.$store.state.subject.list.length
-      if (!hasList) {
+      const hasLength = this.$store.state.subject.list.length
+      if (!hasLength) {
         const userId = this.$store.state.auth.user.objectID
         const response = await this.$dataApi.getSubjectByUserId(userId)
         if (response.ok)
