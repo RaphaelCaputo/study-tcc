@@ -80,7 +80,7 @@ export default {
           const json = await response.json()
           console.log(json)
           jsCookie.set(authConfig.cookieName, json.token, {
-            expires: 1 / 24,
+            expires: 1,
             sameSite: 'Lax',
           })
           this.$router.push('/')
