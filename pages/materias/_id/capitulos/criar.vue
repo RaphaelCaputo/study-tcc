@@ -11,15 +11,6 @@
         @blur="$v.name.$touch()"
       />
       <a-input
-        v-model="description"
-        name="description"
-        label="Descrição"
-        type="text"
-        placeholder="Digite a descrição"
-        :validation="$v.description"
-        @blur="$v.description.$touch()"
-      />
-      <a-input
         v-model="questionsNumber"
         name="questionsNumber"
         label="Total de questões"
@@ -53,7 +44,6 @@ export default {
   data() {
     return {
       name: '',
-      description: '',
       questionsNumber: '',
       correctAnswers: '',
       // checkbox "estudado"
@@ -63,9 +53,6 @@ export default {
     name: {
       required,
       minLength: minLength(3),
-    },
-    description: {
-      required,
     },
     questionsNumber: {
       numeric,
@@ -78,7 +65,6 @@ export default {
   },
   mounted() {
     this.name = ''
-    this.description = ''
     this.questionsNumber = '0'
     this.correctAnswers = '0'
   },
@@ -92,7 +78,6 @@ export default {
         const subjectId = this.$route.params.id
         const payload = {
           name: this.name,
-          description: this.description,
           questionsNumber: this.questionsNumber,
           correctAnswers: this.correctAnswers,
           userId: this.$store.state.auth.user.objectID,
