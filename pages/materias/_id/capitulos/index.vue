@@ -27,13 +27,13 @@
     >
       <ul class="space-y-3">
         <li v-for="chapter in chapterList" :key="chapter.objectID">
-          <NuxtLink :to="`/materias/${chapter.objectID}`">
-            <CardSubject
-              :id="chapter.objectID"
-              :subject="chapter.name"
-              :category="chapter.category"
-            />
-          </NuxtLink>
+          <CardChapter
+            :id="chapter.objectID"
+            :name="chapter.name"
+            :questionsNumber="chapter.questionsNumber"
+            :correctAnswers="chapter.correctAnswers"
+            @click="selectChapter"
+          />
         </li>
       </ul>
     </div>
@@ -69,6 +69,12 @@ export default {
     } catch (error) {
       console.error(error)
     }
+  },
+  methods: {
+    selectChapter(id) {
+      console.log('CHAPTER ID SELECT', id)
+      this.$store.commit('chapter/setCurrentChapter', id)
+    },
   },
 }
 </script>

@@ -1,5 +1,7 @@
 export const state = () => ({
   list: [],
+  currentChapter: '',
+  startTimer: '',
 })
 
 export const getters = {
@@ -14,5 +16,8 @@ export const mutations = {
   },
   addOneToList(state, payload) {
     state.list.push(payload)
+  },
+  setCurrentChapter(state, chapterId) {
+    state.currentChapter = chapterId
   },
 }
