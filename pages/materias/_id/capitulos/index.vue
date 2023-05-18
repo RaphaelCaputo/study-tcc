@@ -32,7 +32,7 @@
             :name="chapter.name"
             :questionsNumber="chapter.questionsNumber"
             :correctAnswers="chapter.correctAnswers"
-            @click="selectChapter"
+            @selectChapter="selectChapter"
           />
         </li>
       </ul>
@@ -50,6 +50,9 @@ export default {
     currentSubject() {
       return this.$store.state.subject.currentSubject
     },
+    currentChapter() {
+      return this.$store.state.chapter.currentChapter
+    },
   },
   async beforeMount() {
     try {
@@ -65,6 +68,7 @@ export default {
         )
         if (response.ok)
           this.$store.commit('chapter/createList', response.json.hits)
+        this.$store.commit('chapter/setCurrentChapter', response.json.hits[0])
       }
     } catch (error) {
       console.error(error)
@@ -73,7 +77,15 @@ export default {
   methods: {
     selectChapter(id) {
       console.log('CHAPTER ID SELECT', id)
-      this.$store.commit('chapter/setCurrentChapter', id)
+      if (this.currentChapter.objectID === id) return
+      const chapter = this.chapterList.find(
+        (chapter) => chapter.objectID === id
+      )
+      console.log(chapter)
+      if (chapter) {
+        this.$store.commit('chapter/setPlay', false)
+        this.$store.commit('chapter/setCurrentChapter', chapter)
+      }
     },
   },
 }

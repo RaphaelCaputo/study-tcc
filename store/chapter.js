@@ -1,7 +1,8 @@
 export const state = () => ({
   list: [],
-  currentChapter: '',
-  startTimer: '',
+  currentChapter: {},
+  chapterTime: 0,
+  isPlay: false,
 })
 
 export const getters = {
@@ -19,5 +20,11 @@ export const mutations = {
   },
   setCurrentChapter(state, chapterId) {
     state.currentChapter = chapterId
+  },
+  setPlay(state, value) {
+    state.isPlay = value
+  },
+  setChapterTime(state, value) {
+    state.chapterTime = value
   },
 }

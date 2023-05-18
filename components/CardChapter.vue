@@ -1,13 +1,13 @@
 <template>
   <div
     class="w-full p-2 border-2 cursor-pointer rounded-xl border-primary"
-    :class="[currentChapter === id ? 'bg-accent-base' : 'bg-secondary']"
-    @click="$emit('click', id)"
+    :class="[selectedChapter ? 'bg-accent-base' : 'bg-secondary']"
+    @click="$emit('selectChapter', id)"
   >
     <div
       class="p-2 rounded-xl"
       :class="[
-        currentChapter === id
+        selectedChapter
           ? 'bg-accent-base text-primary'
           : 'bg-primary text-accent-base',
       ]"
@@ -15,7 +15,7 @@
       <div class="flex items-center justify-between space-x-2">
         <h3>{{ name }}</h3>
         <NuxtLink :to="`${$route.path}/criar`">
-          <EditSvg v-if="currentChapter === id" />
+          <EditSvg v-if="selectedChapter" />
         </NuxtLink>
       </div>
       <p class="mt-2 text-sm text-accent-light">
@@ -24,18 +24,18 @@
       <div class="flex items-center space-x-4">
         <div
           class="w-full h-2 rounded"
-          :class="[currentChapter === id ? 'bg-accent-light' : 'bg-secondary']"
+          :class="[selectedChapter ? 'bg-accent-light' : 'bg-secondary']"
         >
           <div
             class="h-full rounded"
-            :class="[currentChapter === id ? 'bg-primary' : 'bg-accent-base']"
+            :class="[selectedChapter ? 'bg-primary' : 'bg-accent-base']"
             :style="{ width: percent + '%' }"
           ></div>
         </div>
         <div class="whitespace-nowrap">{{ percent }} %</div>
       </div>
       <div
-        v-if="currentChapter === id"
+        v-if="selectedChapter"
         class="flex items-center mt-4 space-x-2"
         @click="toggleTimer"
       >
@@ -45,7 +45,7 @@
           <PlaySvg v-if="!isPlay" class="w-6 h-6 ml-[1px]" />
           <PauseSvg v-else class="w-5 h-5" />
         </div>
-        <div>00:00</div>
+        <div>{{ formattedTime }}</div>
       </div>
     </div>
   </div>
@@ -74,7 +74,9 @@ export default {
   },
   data() {
     return {
-      isPlay: false,
+      ticker: undefined,
+      counter: 0,
+      formattedTime: '00:00:00',
     }
   },
   computed: {
@@ -84,13 +86,54 @@ export default {
     currentChapter() {
       return this.$store.state.chapter.currentChapter
     },
+    selectedChapter() {
+      return this.currentChapter
+        ? this.currentChapter.objectID === this.id
+        : false
+    },
+    isPlay() {
+      return this.$store.state.chapter.isPlay
+    },
+  },
+  beforeDestroy() {
+    this.$store.commit('chapter/setPlay', false)
   },
   methods: {
     toggleTimer() {
-      this.isPlay = !this.isPlay
-      if (this.isPlay) {
+      if (!this.isPlay) {
         console.log('start Timer')
+        this.$store.commit('chapter/setPlay', true)
+        this.startTimer()
+      } else {
+        console.log('stop Timer')
+        this.$store.commit('chapter/setPlay', false)
+        this.stopTimer()
       }
+    },
+    startTimer() {
+      this.ticker = setInterval(() => {
+        if (!this.isPlay) {
+          clearInterval(this.ticker)
+          return
+        }
+        this.counter++
+        this.$store.commit('chapter/setChapterTime', this.counter)
+        this.formattedTime = this.formatTimer(this.counter)
+      }, 1000)
+    },
+    stopTimer() {
+      this.$store.commit('chapter/setPlay', false)
+    },
+    formatTimer(time) {
+      const hours = Math.floor(time / 3600)
+      const minutes = Math.floor((time - hours * 3600) / 60)
+      const seconds = time - hours * 3600 - minutes * 60
+
+      const displaySeconds = seconds < 10 ? `0${seconds}` : seconds
+      const displayMinutes = minutes < 10 ? `0${minutes}` : minutes
+      const displayHours = hours < 10 ? `0${hours}` : hours
+
+      return `${displayHours}:${displayMinutes}:${displaySeconds}`
     },
   },
 }
