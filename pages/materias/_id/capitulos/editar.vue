@@ -28,7 +28,16 @@
         :validation="$v.correctAnswers"
         @blur="$v.correctAnswers.$touch()"
       />
-      <a-button name="Criar" type="submit" />
+      <a-input
+        v-model="studyTime"
+        name="studyTime"
+        label="Tempo estudado (segundos)"
+        type="number"
+        placeholder="Digite o tempo estudado em segundos"
+        :validation="$v.studyTime"
+        @blur="$v.studyTime.$touch()"
+      />
+      <a-button name="Editar" type="submit" />
     </form>
   </div>
 </template>
@@ -46,7 +55,7 @@ export default {
       name: '',
       questionsNumber: '',
       correctAnswers: '',
-      // checkbox "estudado"
+      studyTime: '',
     }
   },
   validations: {
@@ -62,53 +71,38 @@ export default {
       numeric,
       between: between(0, 250),
     },
+    studyTime: {
+      numeric,
+      between: between(0, 86400),
+    },
+  },
+  computed: {
+    currentChapter() {
+      return this.$store.state.chapter.currentChapter
+    },
   },
   mounted() {
-    this.name = ''
-    this.questionsNumber = '0'
-    this.correctAnswers = '0'
+    this.name = this.currentChapter.name
+    this.questionsNumber = String(this.currentChapter.questionsNumber)
+    this.correctAnswers = String(this.currentChapter.correctAnswers)
+    this.studyTime = String(this.currentChapter.studyTime)
   },
   methods: {
     async onSubmit() {
-      // TODO: make preset color instead of color picker on of each HSL intersection and pure color
-      try {
-        this.$v.$touch()
-        if (this.$v.$invalid) return
+      this.$v.$touch()
+      if (this.$v.$invalid) return
 
-        const subjectId = this.$route.params.id
-        const payload = {
-          name: this.name,
-          questionsNumber: this.questionsNumber,
-          correctAnswers: this.correctAnswers,
-          userId: this.$store.state.auth.user.objectID,
-          subjectId,
-          createdAt: new Date().toISOString(),
-          studyTime: 0,
-        }
-        const response = await fetch('/api/chapter', {
-          method: 'POST',
-          body: JSON.stringify(payload),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        console.log('submit!')
-        console.log('response', response)
-
-        if (response.ok) {
-          const json = await response.json()
-          const addedChapter = {
-            objectID: json.objectID,
-            ...payload,
-          }
-          this.$store.commit('chapter/addOneToList', addedChapter)
-          this.$router.push(`${this.$route.path.split('/criar')[0]}`)
-          console.log('json', json)
-          console.log('addedChapter', addedChapter)
-        }
-      } catch (error) {
-        console.error(error)
+      const id = this.currentChapter.objectID
+      const payload = {
+        name: this.name,
+        questionsNumber: this.questionsNumber,
+        correctAnswers: this.correctAnswers,
+        studyTime: this.studyTime,
+        id,
+        selectedChapter: true,
       }
+
+      await this.$store.dispatch('chapter/updateChapterReq', payload)
     },
   },
 }

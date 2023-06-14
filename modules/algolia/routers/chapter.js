@@ -23,6 +23,16 @@ export default (apis) => {
       await createChapter(body, res)
       return
     }
+
+    if (req.method === 'PUT') {
+      console.log('PUT in CHAPTER')
+      if (hasBadBody(req)) {
+        return rejectHitBadRequest(res)
+      }
+
+      await updateChapter(body, res)
+      return
+    }
     rejectHitBadRequest(res)
   }
 
@@ -49,7 +59,6 @@ export default (apis) => {
     if (!response.ok) {
       res.statusCode = 500
       res.end()
-      return
     }
 
     console.log('create response', response)
@@ -64,6 +73,20 @@ export default (apis) => {
 
     const updatedSubj = await apis.subject.update(subjectId, subject)
     console.log('updated subject', updatedSubj)
+    sendJSON(response.json, res)
+  }
+
+  async function updateChapter(body, res) {
+    const { id } = body
+    const payload = {
+      ...body,
+    }
+
+    const response = await apis.chapter.update(id, payload)
+    if (!response.ok) {
+      res.statusCode = 500
+      res.end()
+    }
     sendJSON(response.json, res)
   }
 }

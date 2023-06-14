@@ -22,6 +22,22 @@ export default (algoliaConfig) => {
         return getErrorResponse(error)
       }
     },
+    update: async (chapterId, payload) => {
+      try {
+        return unWrap(
+          await fetch(
+            `https://${algoliaConfig.appId}-dsn.algolia.net/1/indexes/chapters/${chapterId}`,
+            {
+              headers,
+              method: 'PUT',
+              body: JSON.stringify(payload),
+            }
+          )
+        )
+      } catch (error) {
+        return getErrorResponse(error)
+      }
+    },
     getById: async (identity) => {
       try {
         return unWrap(

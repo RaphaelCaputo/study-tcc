@@ -14,7 +14,7 @@
     >
       <div class="flex items-center justify-between space-x-2">
         <h3>{{ name }}</h3>
-        <NuxtLink :to="`${$route.path}/criar`">
+        <NuxtLink :to="`${$route.path}/editar`">
           <EditSvg v-if="selectedChapter" />
         </NuxtLink>
       </div>
@@ -45,7 +45,9 @@
           <PlaySvg v-if="!isPlay" class="w-6 h-6 ml-[1px]" />
           <PauseSvg v-else class="w-5 h-5" />
         </div>
-        <div>{{ formattedTime }}</div>
+        <div>
+          {{ formatTimer(Number(currentChapter.studyTime) + Number(counter)) }}
+        </div>
       </div>
     </div>
   </div>
@@ -81,7 +83,9 @@ export default {
   },
   computed: {
     percent() {
-      return (Number(this.correctAnswers) * 100) / Number(this.questionsNumber)
+      return (
+        (Number(this.correctAnswers) * 100) / Number(this.questionsNumber) || 0
+      )
     },
     currentChapter() {
       return this.$store.state.chapter.currentChapter
@@ -94,6 +98,9 @@ export default {
     isPlay() {
       return this.$store.state.chapter.isPlay
     },
+    chapterTime() {
+      return this.$store.state.chapter.chapterTime
+    },
   },
   beforeDestroy() {
     this.$store.commit('chapter/setPlay', false)
@@ -101,11 +108,9 @@ export default {
   methods: {
     toggleTimer() {
       if (!this.isPlay) {
-        console.log('start Timer')
         this.$store.commit('chapter/setPlay', true)
         this.startTimer()
       } else {
-        console.log('stop Timer')
         this.$store.commit('chapter/setPlay', false)
         this.stopTimer()
       }
@@ -114,11 +119,17 @@ export default {
       this.ticker = setInterval(() => {
         if (!this.isPlay) {
           clearInterval(this.ticker)
+          this.updateChapter(this.counter, this.selectedChapter)
+          this.$store.commit('chapter/setChapterTime', 0)
+          this.counter = 0
           return
         }
+
         this.counter++
         this.$store.commit('chapter/setChapterTime', this.counter)
-        this.formattedTime = this.formatTimer(this.counter)
+        this.formattedTime = this.formatTimer(
+          Number(this.counter) + Number(this.currentChapter.studyTime)
+        )
       }, 1000)
     },
     stopTimer() {
@@ -134,6 +145,14 @@ export default {
       const displayHours = hours < 10 ? `0${hours}` : hours
 
       return `${displayHours}:${displayMinutes}:${displaySeconds}`
+    },
+    async updateChapter(addTime, selectedChapter) {
+      const payload = {
+        id: this.id,
+        selectedChapter,
+        addTime,
+      }
+      await this.$store.dispatch('chapter/updateChapterReq', payload)
     },
   },
 }
