@@ -47,6 +47,9 @@ export default {
     chapterList() {
       return this.$store.state.chapter.list
     },
+    subjectList() {
+      return this.$store.state.subject.list
+    },
     currentSubject() {
       return this.$store.state.subject.currentSubject
     },
@@ -58,17 +61,29 @@ export default {
     try {
       const subjectId = this.$route.params.id
       const hasLength = this.$store.state.chapter.list.length
-      if (!hasLength || this.currentSubject !== subjectId) {
-        this.$store.commit('subject/setCurrentSubject', subjectId)
+      if (!hasLength || this.currentSubject.objectID !== subjectId) {
+        this.$store.commit('subject/setCurrentSubject', {})
+        this.$store.commit('chapter/createList', [])
+        this.$store.commit('chapter/setCurrentChapter', {})
 
         const userId = this.$store.state.auth.user.objectID
-        const response = await this.$dataApi.getChaptersBySubjectId(
+        const getSubject = await this.$dataApi.getSubject(subjectId)
+        const getChapters = await this.$dataApi.getChaptersBySubjectId(
           userId,
           subjectId
         )
-        if (response.ok)
-          this.$store.commit('chapter/createList', response.json.hits)
-        this.$store.commit('chapter/setCurrentChapter', response.json.hits[0])
+
+        Promise.all([getChapters, getSubject]).then((response) => {
+          if (response[1].ok)
+            this.$store.commit('subject/setCurrentSubject', response[1].json)
+
+          if (response[0].ok)
+            this.$store.commit('chapter/createList', response[0].json.hits)
+          this.$store.commit(
+            'chapter/setCurrentChapter',
+            response[0].json.hits[0]
+          )
+        })
       }
     } catch (error) {
       console.error(error)
@@ -76,12 +91,10 @@ export default {
   },
   methods: {
     selectChapter(id) {
-      console.log('CHAPTER ID SELECT', id)
       if (this.currentChapter.objectID === id) return
       const chapter = this.chapterList.find(
         (chapter) => chapter.objectID === id
       )
-      console.log(chapter)
       if (chapter) {
         this.$store.commit('chapter/setPlay', false)
         this.$store.commit('chapter/setCurrentChapter', chapter)

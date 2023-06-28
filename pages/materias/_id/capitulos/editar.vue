@@ -50,6 +50,7 @@ import AInput from '~/components/atoms/AInput.vue'
 
 export default {
   components: { AButton, AInput },
+  // layout: 'clean',
   data() {
     return {
       name: '',
@@ -103,6 +104,7 @@ export default {
       }
 
       await this.$store.dispatch('chapter/updateChapterReq', payload)
+      this.$router.push(`${this.$route.path.split('/editar')[0]}`)
     },
   },
 }

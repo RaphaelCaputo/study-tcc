@@ -7,6 +7,9 @@ export const getters = {
   getList(state) {
     return state.list
   },
+  getSubjectPageTitle(state) {
+    return state.currentSubject.name || ''
+  },
 }
 
 export const mutations = {
