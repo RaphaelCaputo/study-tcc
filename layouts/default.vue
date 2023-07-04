@@ -1,9 +1,9 @@
 <template>
   <div
-    class="flex min-w-full min-h-screen p-4 text-dark-fg bg-secondary md:p-0 md:bg-primary"
+    class="flex min-w-full min-h-screen text-dark-fg bg-secondary md:p-0 md:bg-primary"
   >
     <SidebarNav class="md:min-h-screen" />
-    <div class="container md:w-full">
+    <div class="p-4 st-container md:p-0">
       <HeaderNav class="flex" />
       <Nuxt class="main" />
       <FooterNav class="hidden footer md:block" />
@@ -16,8 +16,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.container {
+.st-container {
   max-height: 100vh;
+  width: 100%;
   display: grid;
   grid-template-rows: auto 1fr auto;
   grid-template-columns: 1fr;

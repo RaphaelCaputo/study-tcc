@@ -25,7 +25,7 @@
     <div
       class="flex-grow w-full p-2 mt-8 mb-24 overflow-y-auto text-accent-base md:mb-0"
     >
-      <ul class="space-y-3">
+      <ul class="grid items-center w-full gap-4 md:grid-cols-2">
         <li v-for="subject in subjectList" :key="subject.objectID">
           <NuxtLink :to="`/materias/${subject.objectID}/capitulos`">
             <CardSubject
