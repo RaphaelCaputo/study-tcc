@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="w-full max-w-md">
     <form class="flex flex-col space-y-4" @submit.prevent="onSubmit">
       <a-input
         v-model="email"
