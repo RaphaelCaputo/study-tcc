@@ -46,7 +46,7 @@
           <PauseSvg v-else class="w-5 h-5" />
         </div>
         <div>
-          {{ formatTimer(Number(currentChapter.studyTime) + Number(counter)) }}
+          {{ formatedTime }}
         </div>
       </div>
     </div>
@@ -54,6 +54,8 @@
 </template>
 
 <script>
+import { formatTimer } from '../utils/timer'
+
 export default {
   name: 'CardSubject',
   props: {
@@ -78,7 +80,7 @@ export default {
     return {
       ticker: undefined,
       counter: 0,
-      formattedTime: '00:00:00',
+      formatedTime: '00:00:00',
     }
   },
   computed: {
@@ -101,6 +103,9 @@ export default {
     chapterTime() {
       return this.$store.state.chapter.chapterTime
     },
+  },
+  beforeMount() {
+    this.formatedTime = formatTimer(Number(this.currentChapter.studyTime))
   },
   beforeDestroy() {
     this.$store.commit('chapter/setPlay', false)
@@ -127,24 +132,13 @@ export default {
 
         this.counter++
         this.$store.commit('chapter/setChapterTime', this.counter)
-        this.formattedTime = this.formatTimer(
+        this.formatedTime = formatTimer(
           Number(this.counter) + Number(this.currentChapter.studyTime)
         )
       }, 1000)
     },
     stopTimer() {
       this.$store.commit('chapter/setPlay', false)
-    },
-    formatTimer(time) {
-      const hours = Math.floor(time / 3600)
-      const minutes = Math.floor((time - hours * 3600) / 60)
-      const seconds = time - hours * 3600 - minutes * 60
-
-      const displaySeconds = seconds < 10 ? `0${seconds}` : seconds
-      const displayMinutes = minutes < 10 ? `0${minutes}` : minutes
-      const displayHours = hours < 10 ? `0${hours}` : hours
-
-      return `${displayHours}:${displayMinutes}:${displaySeconds}`
     },
     async updateChapter(addTime, selectedChapter) {
       const payload = {
